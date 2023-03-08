@@ -6,6 +6,8 @@ namespace ITAMon
 {
     internal class Program
     {
+        private static Itamon ActiveItamon;
+
         static void Main(string[] args)
         {
             createHeader("ITAMon Editor", 8);
@@ -24,7 +26,7 @@ namespace ITAMon
             createMenu(menuTexts);
 
             var input = Console.ReadLine();
-            while(!checkIntInput(input, menuTexts.GetLength(0)))
+            while(checkIntInput(input, menuTexts.GetLength(0)) != 1)
             {
                 Console.WriteLine($"Bitte einen der Menüpunkte auswählen! (1 - {menuTexts.GetLength(0)})");
                 input = Console.ReadLine();
@@ -40,65 +42,7 @@ namespace ITAMon
                 Console.WriteLine("ITAMon erstellen:");
                 Console.WriteLine();
 
-                Console.WriteLine("Wo soll die ITAMon Datei gespeichert werden?");
-
-                var path = Console.ReadLine();
-                var success = FileManager.CheckPath(path);
-
-                while (!success)
-                {
-                    Console.WriteLine("Die Datei konnte nicht erstellt werden. Bitte erneut den Pfad angeben");
-
-                    path = Console.ReadLine();
-                    success = FileManager.CheckPath(path);
-                }
-
-                Console.WriteLine("Wie soll das ITAMon heißen?");
-
-                var name = Console.ReadLine();
-
-                Console.WriteLine("Bitte gib den Dateipfad des Erscheinungsbildes des ITAMons an");
-
-                var imagePath = Console.ReadLine();
-                success = FileManager.CheckIfImage(imagePath);
-
-                while(success == false)
-                {
-                    Console.WriteLine("Die angegebene Datei ist kein Bild. Bitte erneut den Pfad eingeben");
-
-                    imagePath = Console.ReadLine();
-                    success = FileManager.CheckIfImage(imagePath);
-                }
-
-                Console.WriteLine("Welchen der Typen soll das ITAMon haben?");
-                var enumValues = Enum.GetNames(typeof(Typ));
-                for (int i = 0; i < enumValues.Length; i++)
-                {
-                    Console.WriteLine($"[{i + 1}] {enumValues[i]}");
-                }
-
-                var typInt = Console.ReadLine();
-
-                while(!checkIntInput(typInt, enumValues.Length))
-                {
-                    Console.WriteLine("Bitte eine gültige Zahl eingeben");
-
-                    typInt = Console.ReadLine();
-                }
-
-                var typ = enumValues[int.Parse(typInt) - 1];
-
-                Itamon itamon = new Itamon();
-                itamon.Name = name;
-                itamon.ImagePath = imagePath;
-                itamon.Typ = typ;
-
-                Console.WriteLine("Datei wird erstellt...");
-                success = itamon.SafeItamon(path);
-                if (success)
-                    Console.WriteLine("Datei erfolgreich erstellt.");
-                else
-                    Console.WriteLine("Es ist ein Fehler aufgetreten...");
+                CreateItamon();
             }
             else if(input == "3")
             {
@@ -164,22 +108,238 @@ namespace ITAMon
         /// Checks wether an input is a valid integer input
         /// </summary>
         /// <param name="input">Input</param>
-        /// <returns>True if input is valid else false</returns>
-        private static bool checkIntInput(string input, int max)
+        /// <returns>1 if input is valid, 0 if not an int, -1 if too big and -2 if too small</returns>
+        private static int checkIntInput(string input, int max)
         {
             int number;
 
             if (!int.TryParse(input, out number))
             {
-                return false;
+                return 0;
             }
 
-            if (number > max || number <= 0)
+            if (number > max)
             {
-                return false;
+                return -1;
+            }
+            if (number <= 0)
+            {
+                return -2;
             }
 
-            return true;
+            return 1;
+        }
+
+
+        private static void CreateItamon()
+        {
+            ActiveItamon = new Itamon();
+
+            Console.WriteLine("Wo soll die ITAMon Datei gespeichert werden?");
+
+            var path = Console.ReadLine();
+            var success = FileManager.CheckPath(path);
+
+            while (!success)
+            {
+                Console.WriteLine("Die Datei konnte nicht erstellt werden. Bitte erneut den Pfad angeben");
+
+                path = Console.ReadLine();
+                success = FileManager.CheckPath(path);
+            }
+
+            SetName();
+
+            SetImage();
+
+            SetTyp();
+
+            var attackAmount = 0;
+            for (int i = 0; i < ActiveItamon.Attacks.Length; i++)
+            {
+                if (ActiveItamon.Attacks[i] != null)
+                {
+                    attackAmount++;
+                }
+            }
+            Console.WriteLine($"Das ITAMon besizt {attackAmount}/4 Attacken");
+            for (int i = 0; i < ActiveItamon.Attacks.Length; i++) 
+            {
+                Console.WriteLine();
+                Console.WriteLine($"{i + 1}. Attacke: ");
+                SetAttack(i);
+            }
+
+            Console.WriteLine();
+
+            Console.WriteLine("Datei wird erstellt...");
+            success = ActiveItamon.SafeItamon(path);
+            if (success)
+                Console.WriteLine("Datei erfolgreich gespeichert.");
+            else
+                Console.WriteLine("Es ist ein Fehler aufgetreten...");
+        }
+
+
+
+        private static void SetName()
+        {
+            Console.WriteLine("Wie soll das ITAMon heißen?");
+
+            var name = Console.ReadLine();
+
+            ActiveItamon.Name = name;
+        }
+
+        private static void SetImage()
+        {
+            Console.WriteLine("Bitte gib den Dateipfad des Erscheinungsbildes des ITAMons an");
+
+            var imagePath = Console.ReadLine();
+            var success = FileManager.CheckIfImage(imagePath);
+
+            while (success == false)
+            {
+                Console.WriteLine("Die angegebene Datei ist kein Bild. Bitte erneut den Pfad eingeben");
+
+                imagePath = Console.ReadLine();
+                success = FileManager.CheckIfImage(imagePath);
+            }
+
+            ActiveItamon.ImagePath = imagePath;
+        }
+
+        private static void SetTyp()
+        {
+            Console.WriteLine("Welchen der Typen soll das ITAMon haben?");
+            var enumValues = Enum.GetNames(typeof(Typ));
+            for (int i = 0; i < enumValues.Length; i++)
+            {
+                Console.WriteLine($"[{i + 1}] {enumValues[i]}");
+            }
+
+            var typInt = Console.ReadLine();
+
+            while (checkIntInput(typInt, enumValues.Length) != 1)
+            {
+                Console.WriteLine("Bitte eine gültige Zahl eingeben");
+
+                typInt = Console.ReadLine();
+            }
+
+            var typ = enumValues[int.Parse(typInt) - 1];
+
+            ActiveItamon.Typ = typ;
+        }
+
+        private static void SetAttack(int index)
+        {
+            var usedActionPoints = 0;
+            foreach(var attack in ActiveItamon.Attacks)
+            {
+                if(attack == null)
+                {
+                    continue;
+                }
+
+                usedActionPoints += attack.Damage + attack.Accuracy + attack.Magazine;
+            }
+
+            var totalActionPoints = 100 * ActiveItamon.Attacks.Length + (6 * ActiveItamon.Level) - 6;
+            var leftActionPoints = totalActionPoints - usedActionPoints;
+
+            Console.WriteLine($"{leftActionPoints} Aktionspunkte übrig.");
+
+            Console.WriteLine("Wie soll die Attacke heißen");
+            var name = Console.ReadLine();
+
+
+            Console.WriteLine("Wieviel Schaden soll die Attacke Machen?");
+            var damage = Console.ReadLine();
+
+            var result = checkIntInput(damage, leftActionPoints);
+
+            while (result != 1)
+            {
+                if(result == 0)
+                {
+                    Console.WriteLine("Die Eingabe ist keine Zahl. Bitte erneut eingeben.");
+                }
+                else if(result == -1)
+                {
+                    Console.WriteLine("Nicht genügend Aktionspunkte vorhanden. Bitte erneut eingeben");
+                }
+                else if(result == -2)
+                {
+                    Console.WriteLine("Der Schaden muss größer als 0 sein. Bitte erneut eingeben");
+                }
+
+                damage = Console.ReadLine();
+
+                result = checkIntInput(damage, leftActionPoints);
+            }
+
+            leftActionPoints -= int.Parse(damage);
+
+
+            Console.WriteLine("Wie genau soll die Attacke sein?");
+            var accuracy = Console.ReadLine();
+
+            result = checkIntInput(accuracy, leftActionPoints);
+
+            while (result != 1)
+            {
+                if (result == 0)
+                {
+                    Console.WriteLine("Die Eingabe ist keine Zahl. Bitte erneut eingeben.");
+                }
+                else if (result == -1)
+                {
+                    Console.WriteLine("Nicht genügend Aktionspunkte vorhanden. Bitte erneut eingeben");
+                }
+                else if (result == -2)
+                {
+                    Console.WriteLine("Die Genauigkeit muss größer als 0 sein. Bitte erneut eingeben");
+                }
+
+                accuracy = Console.ReadLine();
+
+                result = checkIntInput(accuracy, leftActionPoints);
+            }
+
+            leftActionPoints -= int.Parse(accuracy);
+
+
+            Console.WriteLine("Wieviel Magazin soll die Attacke haben?");
+            var magazine = Console.ReadLine();
+
+            result = checkIntInput(magazine, leftActionPoints);
+
+            while (result != 1)
+            {
+                if (result == 0)
+                {
+                    Console.WriteLine("Die Eingabe ist keine Zahl. Bitte erneut eingeben.");
+                }
+                else if (result == -1)
+                {
+                    Console.WriteLine("Nicht genügend Aktionspunkte vorhanden. Bitte erneut eingeben");
+                }
+                else if (result == -2)
+                {
+                    Console.WriteLine("Das Magazin muss größer als 0 sein. Bitte erneut eingeben");
+                }
+
+                magazine = Console.ReadLine();
+
+                result = checkIntInput(magazine, leftActionPoints);
+            }
+
+            leftActionPoints -= int.Parse(magazine);
+
+
+            ActiveItamon.Attacks[index] = new Attack(name,int.Parse(damage) , int.Parse(accuracy), int.Parse(magazine));
+            
         }
     }
 }

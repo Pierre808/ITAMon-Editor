@@ -24,6 +24,7 @@ namespace ITAMon
             this.Health = 10;
             this.ExperiencePoints = 0;
             this.ActionPoints = 100;
+            this.Attacks = new Attack[4];
         }
 
         public Itamon(string name, string imagePath, string typ, int level, double health, int experiencePoints, int actionPoints)
@@ -35,6 +36,7 @@ namespace ITAMon
             this.Health = health;
             this.ExperiencePoints = experiencePoints;
             this.ActionPoints = actionPoints;
+            //this.Attacks = new Attack[4];
         }
 
         public bool AddAttack(Attack att)
