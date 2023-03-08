@@ -35,8 +35,20 @@ namespace ITAMon
             this.Health = health;
             this.ExperiencePoints = experiencePoints;
             this.ActionPoints = actionPoints;
+        }
 
-            //TODO: load attacks
+        public bool AddAttack(Attack att)
+        {
+            for(int i = 0; i < Attacks.Length; i++)
+            {
+                if(Attacks[i] == null)
+                {
+                    Attacks[i] = att;
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool SafeItamon(string path)
@@ -45,7 +57,11 @@ namespace ITAMon
                 $"{ImagePath}\n" +
                 $"{this.Typ};{Level};{Health};{ExperiencePoints}\n";
 
-            //TODO: Attacks
+            for(int i = 0; i < Attacks.Length; i++)
+            {
+                Attack attack = Attacks[i];
+                content += $"{attack.Name};{attack.Damage};{attack.Accuracy};{attack.Magazine}\n";
+            }
 
             return FileManager.CreateITAFile(path, Name, content);
         }
