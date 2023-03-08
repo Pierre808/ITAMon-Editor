@@ -12,6 +12,12 @@ namespace ITAMon
         {
             createHeader("ITAMon Editor", 8);
 
+            while(true)
+                readMenu();
+        }
+
+        private static void readMenu()
+        {
             string[,] menuTexts =
             {
                 {"ITAMon bearbeiten", "Läd eine bereits existierende ITAMon Datei setzt das enthaltene ITAMon als aktuelles ITAMon" },
@@ -26,31 +32,55 @@ namespace ITAMon
             createMenu(menuTexts);
 
             var input = Console.ReadLine();
-            while(checkIntInput(input, menuTexts.GetLength(0)) != 1)
+            while (checkIntInput(input, menuTexts.GetLength(0)) != 1)
             {
                 Console.WriteLine($"Bitte einen der Menüpunkte auswählen! (1 - {menuTexts.GetLength(0)})");
                 input = Console.ReadLine();
             }
 
             //Run menu-command
-            if(input == "1")
+            if (input == "1")
             {
                 Console.WriteLine("ITAMon bearbeiten:");
+                Console.WriteLine();
             }
-            else if(input == "2")
+            else if (input == "2")
             {
                 Console.WriteLine("ITAMon erstellen:");
                 Console.WriteLine();
 
                 CreateItamon();
             }
-            else if(input == "3")
+            else if (input == "3")
             {
                 Console.WriteLine("Namen bearbeiten:");
+                Console.WriteLine();
+
+                if (ActiveItamon == null)
+                {
+                    Console.WriteLine("Kein aktives ITAMon vorhanden. Bitte erst erstellen oder laden");
+
+                    return;
+                }
+
+                SetName();
+            }
+            else if (input == "4")
+            {
+                Console.WriteLine("Bild bearbeiten:");
+                Console.WriteLine();
+            }
+            else if (input == "5")
+            {
+                Console.WriteLine("Änderungen speichern:");
+                Console.WriteLine();
+            }
+            else if (input == "6")
+            {
+                Console.WriteLine("Help:");
+                Console.WriteLine();
             }
         }
-
-
 
         /// <summary>
         /// Creates a header
@@ -92,7 +122,9 @@ namespace ITAMon
 
         private static void createMenu(string[,] menuTexts)
         {
-            for(int i = 0; i < menuTexts.GetLength(0); i++)
+            Console.WriteLine();
+
+            for (int i = 0; i < menuTexts.GetLength(0); i++)
             {
                 Console.Write("[");
                 Console.ForegroundColor = ConsoleColor.Green;
