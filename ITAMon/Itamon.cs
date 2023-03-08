@@ -10,8 +10,8 @@ namespace ITAMon
     internal class Itamon
     {
         public string Name { get; set; }
-        public Bitmap Image { get; set; }
-        public Typ Typ { get; set; }
+        public string ImagePath { get; set; }
+        public string Typ { get; set; }
         public int Level { get; set; }
         public double Health { get; set; }
         public int ExperiencePoints { get; set; }
@@ -24,13 +24,12 @@ namespace ITAMon
             this.Health = 10;
             this.ExperiencePoints = 0;
             this.ActionPoints = 100;
-            this.Attacks = new Attack[4];
         }
 
-        public Itamon(string name, Bitmap image, Typ typ, int level, double health, int experiencePoints, int actionPoints)
+        public Itamon(string name, string imagePath, string typ, int level, double health, int experiencePoints, int actionPoints)
         {
             this.Name = name;
-            this.Image = image;
+            this.ImagePath = imagePath;
             this.Typ = typ; 
             this.Level = level;
             this.Health = health;
@@ -38,6 +37,17 @@ namespace ITAMon
             this.ActionPoints = actionPoints;
 
             //TODO: load attacks
+        }
+
+        public bool SafeItamon(string path)
+        {
+            string content = $"{Name}\n" +
+                $"{ImagePath}\n" +
+                $"{this.Typ};{Level};{Health};{ExperiencePoints}\n";
+
+            //TODO: Attacks
+
+            return FileManager.CreateITAFile(path, Name, content);
         }
     }
 }

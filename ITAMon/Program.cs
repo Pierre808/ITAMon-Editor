@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection.PortableExecutable;
 
 namespace ITAMon
@@ -23,13 +24,86 @@ namespace ITAMon
             createMenu(menuTexts);
 
             var input = Console.ReadLine();
-            while(!checkMenuInput(input, menuTexts.GetLength(0)))
+            while(!checkIntInput(input, menuTexts.GetLength(0)))
             {
-                Console.WriteLine($"Bitte einen der Menüpunkte auswählen! (1 - {menuTexts.GetLength(0) - 1})");
+                Console.WriteLine($"Bitte einen der Menüpunkte auswählen! (1 - {menuTexts.GetLength(0)})");
                 input = Console.ReadLine();
             }
 
             //Run menu-command
+            if(input == "1")
+            {
+                Console.WriteLine("ITAMon bearbeiten:");
+            }
+            else if(input == "2")
+            {
+                Console.WriteLine("ITAMon erstellen:");
+                Console.WriteLine();
+
+                Console.WriteLine("Wo soll die ITAMon Datei gespeichert werden?");
+
+                var path = Console.ReadLine();
+                var success = FileManager.CheckPath(path);
+
+                while (!success)
+                {
+                    Console.WriteLine("Die Datei konnte nicht erstellt werden. Bitte erneut den Pfad angeben");
+
+                    path = Console.ReadLine();
+                    success = FileManager.CheckPath(path);
+                }
+
+                Console.WriteLine("Wie soll das ITAMon heißen?");
+
+                var name = Console.ReadLine();
+
+                Console.WriteLine("Bitte gib den Dateipfad des Erscheinungsbildes des ITAMons an");
+
+                var imagePath = Console.ReadLine();
+                success = FileManager.CheckIfImage(imagePath);
+
+                while(success == false)
+                {
+                    Console.WriteLine("Die angegebene Datei ist kein Bild. Bitte erneut den Pfad eingeben");
+
+                    imagePath = Console.ReadLine();
+                    success = FileManager.CheckIfImage(imagePath);
+                }
+
+                Console.WriteLine("Welchen der Typen soll das ITAMon haben?");
+                var enumValues = Enum.GetNames(typeof(Typ));
+                for (int i = 0; i < enumValues.Length; i++)
+                {
+                    Console.WriteLine($"[{i + 1}] {enumValues[i]}");
+                }
+
+                var typInt = Console.ReadLine();
+
+                while(!checkIntInput(typInt, enumValues.Length))
+                {
+                    Console.WriteLine("Bitte eine gültige Zahl eingeben");
+
+                    typInt = Console.ReadLine();
+                }
+
+                var typ = enumValues[int.Parse(typInt) - 1];
+
+                Itamon itamon = new Itamon();
+                itamon.Name = name;
+                itamon.ImagePath = imagePath;
+                itamon.Typ = typ;
+
+                Console.WriteLine("Datei wird erstellt...");
+                success = itamon.SafeItamon(path);
+                if (success)
+                    Console.WriteLine("Datei erfolgreich erstellt.");
+                else
+                    Console.WriteLine("Es ist ein Fehler aufgetreten...");
+            }
+            else if(input == "3")
+            {
+                Console.WriteLine("Namen bearbeiten:");
+            }
         }
 
 
@@ -87,11 +161,11 @@ namespace ITAMon
         }
 
         /// <summary>
-        /// Checks wether an input is a valid input (accessing one of the menu points)
+        /// Checks wether an input is a valid integer input
         /// </summary>
         /// <param name="input">Input</param>
         /// <returns>True if input is valid else false</returns>
-        private static bool checkMenuInput(string input, int menuLenght)
+        private static bool checkIntInput(string input, int max)
         {
             int number;
 
@@ -100,7 +174,7 @@ namespace ITAMon
                 return false;
             }
 
-            if (number >= menuLenght - 1)
+            if (number > max || number <= 0)
             {
                 return false;
             }
