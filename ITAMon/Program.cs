@@ -26,8 +26,7 @@ namespace ITAMon
                 {"Bild des aktuellen ITAMons ändern", "Ersetzt das Bild des aktuellen ITAMons" },
                 {"Änderungen speichern", "Speichert die vorgenommen Änderungen" },
                 {"Help", "Ein ITAMon kann mithilfe dieses Editors bearbeitet/erstellt werden. " +
-                    "Das zuletzt importierte/erstelle ITAMon stellt das aktuelle ITAMon dar und kann über die aufgelisteten Befehle bearbeitet werden." +
-                    "Für mehr Infos zu den jeweiligen Befehlen: Help [Befehl Index] " }
+                    "Das zuletzt importierte/erstelle ITAMon stellt das aktuelle ITAMon dar und kann über die aufgelisteten Befehle bearbeitet werden."}
             };
             createMenu(menuTexts);
 
@@ -123,6 +122,13 @@ namespace ITAMon
             {
                 Console.WriteLine("Help:");
                 Console.WriteLine();
+
+                Console.WriteLine(menuTexts[menuTexts.GetLength(0) - 1, 1]);
+                for(int i = 0; i < menuTexts.GetLength(0); i++)
+                {
+                    Console.WriteLine(menuTexts[i, 0] + ": " + menuTexts[i, 1]);
+                    Console.WriteLine();
+                }
             }
         }
 
