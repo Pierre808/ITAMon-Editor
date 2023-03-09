@@ -85,7 +85,12 @@ namespace ITAMon
                 if (linesResult[i] != "" && linesResult[i] != " ")
                 {
                     Array.Resize(ref lines, lines.Length + 1);
-                    lines[i] = linesResult[i].Substring(0, linesResult[i].Length - 1);
+                    var result = linesResult[i];
+                    if(result.EndsWith("\r"))
+                    {
+                        result = result.Substring(0, result.Length - 1);
+                    }
+                    lines[i] = result;
                 }
             }
 
