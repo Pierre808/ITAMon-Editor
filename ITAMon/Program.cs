@@ -98,6 +98,17 @@ namespace ITAMon
             {
                 Console.WriteLine("Änderungen speichern:");
                 Console.WriteLine();
+
+                Console.WriteLine("Wo sollen die Änderungen gespeichert werden?");
+                var path = Console.ReadLine();
+
+                while (ActiveItamon.SafeItamon(path) == false)
+                {
+                    Console.WriteLine("Konnte die datei nicht unter: " + path + " erstellen. Bitte den Pfad erneut eingeben.");
+                    path = Console.ReadLine();
+                }
+
+                Console.WriteLine("Änderungen wurden gespeichert!");
             }
             else if (input == "6")
             {
