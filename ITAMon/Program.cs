@@ -43,6 +43,30 @@ namespace ITAMon
             {
                 Console.WriteLine("ITAMon bearbeiten:");
                 Console.WriteLine();
+
+                Console.WriteLine("Wo ist die ITAMon Datein gespeichert?");
+
+                var path = Console.ReadLine();
+
+                while(FileManager.ReadITAFile(path).Equals(""))
+                {
+                    Console.WriteLine("Die Datei konnte nicht geladen werden." +
+                        "\nIst es eine .ITA Datei? Bitte erneut den Pfad eingeben");
+
+                    path = Console.ReadLine();
+                }
+
+                ActiveItamon = new Itamon();
+
+                var success = ActiveItamon.LoadItamon(path);
+
+                if(success != "")
+                {
+                    Console.WriteLine(success + " Vorgang abgebrochen");
+                    return;
+                }
+
+                Console.WriteLine("ITAMon erfolgreich importiert. Du kannst es nun bearbeiten");
             }
             else if (input == "2")
             {

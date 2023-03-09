@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ITAMon
 {
-    internal class FileManager
+    public class FileManager
     {
         public static bool CreateITAFile(string path, string filename, string content)
         {
@@ -25,6 +25,29 @@ namespace ITAMon
             {
                 return false;
             }
+        }
+
+        public static string ReadITAFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                try
+                {
+                    if (Path.GetExtension(path) != ".ITA")
+                    {
+                        return "";
+                    }
+
+                    return File.ReadAllText(path);
+
+                }
+                catch
+                {
+                    return "";
+                }
+            }
+
+            return "";
         }
 
         public static bool CheckPath(string path)
