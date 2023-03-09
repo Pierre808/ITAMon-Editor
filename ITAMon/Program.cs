@@ -93,6 +93,15 @@ namespace ITAMon
             {
                 Console.WriteLine("Bild bearbeiten:");
                 Console.WriteLine();
+
+                if (ActiveItamon == null)
+                {
+                    Console.WriteLine("Kein aktives ITAMon vorhanden. Bitte erst erstellen oder laden");
+
+                    return;
+                }
+
+                SetImage();
             }
             else if (input == "5")
             {

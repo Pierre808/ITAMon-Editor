@@ -77,7 +77,8 @@ namespace ITAMon
                 return "Datei ist leer.";
             }
 
-            string[] linesResult = content.Split("\n");
+            var end = Convert.ToChar("\n");
+            string[] linesResult = content.Split(end);
             string[] lines = new string[0];
 
             for (int i = 0; i < linesResult.Length; i++)
